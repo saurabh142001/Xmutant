@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+    
+  }
+}
+
+
+body { background: linear-gradient(to bottom right, antiquewhite, rgb(201, 254, 198));
+ 
+ background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color:rgb(26,48,43)
+
+ 
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+    
+  }
+}
+
+
+.landing{background-image: url("https://www.thescottresort.com/wp-content/uploads/2018/09/texture-1700x880.jpg");}
+
+.itemgrid{
+  background-color: #445c58;
+  
+}
+.movingcards{
+  background-color: #445c58;
+}
+
