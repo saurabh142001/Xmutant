@@ -41,26 +41,6 @@ export const ContainerScroll = ({
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  // Dummy users
-  const dummyUsers = [
-    {
-      name: "John Doe",
-     
-      image: "https://via.placeholder.com/150",
-      category: "Art",
-      collection: "Valyria"
-    },
-    {
-      name: "Jane Smith",
-      collection: "UX Designer",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      name: "Alice Johnson",
-     collection: "Product Manager",
-      image: "https://via.placeholder.com/150",
-    },
-  ];
 
   return (
     <div

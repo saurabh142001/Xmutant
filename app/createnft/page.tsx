@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Dropzone from 'react-dropzone';
 
 const CreateNFT = () => {
   const [name, setName] = useState('');
@@ -8,6 +9,8 @@ const CreateNFT = () => {
   const [supply, setSupply] = useState('');
   const [selectedCollection, setSelectedCollection] = useState('');
   const [selectedBlockchain, setSelectedBlockchain] = useState('');
+  const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
 
   const handleSupplyChange = (e) => {
     const newValue = e.target.value < 1 ? 1 : e.target.value;
@@ -16,6 +19,30 @@ const CreateNFT = () => {
 
   const handleCreateNFT = () => {
     console.log('Creating NFT...');
+  };
+
+  const handleDrop = (acceptedFiles) => {
+    setFiles(acceptedFiles);
+    const filePreviewsPromise = acceptedFiles.map((file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      })
+    );
+
+    Promise.all(filePreviewsPromise)
+      .then((previews) => setPreviews(previews))
+      .catch((error) => console.error('Error generating previews:', error));
+  };
+
+  const handleDropRejected = (rejectedFiles) => {
+    console.log('Rejected files:', rejectedFiles);
+  };
+
+  const handleAddFile = () => {
+    document.querySelector('input[type="file"]').click();
   };
 
   // Dummy data for collections and blockchains
@@ -27,24 +54,56 @@ const CreateNFT = () => {
       <h2 className="text-xl font-semibold m-8 ">Create NFT</h2>
       <div className="flex flex-row h-screen">
         <div className="flex-1 p-8 text-center relative">
-          <div className="border border-gray-900 border-2 border-dotted bg-white w-full h-80 rounded-xl p-4 flex justify-center items-center relative">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg><br></br>
-            
-            <p className='text-gray-400'> Image, audio, video, or 3D models.<br></br>Drag or choose the files to upload</p>
-          </div>
+          <Dropzone
+            onDrop={handleDrop}
+            onDropRejected={handleDropRejected}
+            accept="image/*,audio/*,video/*,model/*"
+            maxFiles={1}
+            multiple={false}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <div {...getRootProps()} className="border border-gray-900 border-2 border-dotted bg-white w-full h-80 rounded-xl p-4 flex justify-center items-center relative">
+                <input {...getInputProps()} />
+                {previews.length > 0 ? (
+                  <div className="w-full h-full flex justify-center items-center">
+                    {previews.map((preview, index) => (
+                      <img
+                        key={index}
+                        src={preview}
+                        alt="Preview"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <button onClick={handleAddFile}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-12 w-12 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                    </button>
+                    <br />
+                    <p className="text-gray-400">
+                      Image, audio, video, or 3D models.
+                      <br />
+                      Drag or choose the files to upload
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+          </Dropzone>
         </div>
 
         <div className="flex-1 p-8">
@@ -64,7 +123,7 @@ const CreateNFT = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
-    
+
           <div className='text-start text-gray-700 font-semibold'>Supply</div>
           <input
             type="number"
@@ -112,25 +171,21 @@ const CreateNFT = () => {
             className="border border-gray-200 rounded-md p-2 mb-4 w-full  text-gray-400 transition-all duration-300 hover:border-blue-500"
             value={selectedBlockchain}
             onChange={(e) => setSelectedBlockchain(e.target.value)}
-          >
-            <option value="">Select Blockchain</option>
-            {dummyBlockchains.map((blockchain, index) => (
-              <option key={index} value={blockchain}>
-                {blockchain}
-              </option>
-            ))}
-          </select>
-
-          <button
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-900"
-            onClick={handleCreateNFT}
-          >
-            Create NFT
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+          ><option value="">Select Blockchain</option>
+          {dummyBlockchains.map((blockchain, index) => (
+            <option key={index} value={blockchain}>
+              {blockchain}
+            </option>
+          ))}
+        </select>
+      <button
+      className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-900"
+      onClick={handleCreateNFT}
+    >
+      Create NFT
+    </button>
+  </div>
+</div>
+</div>);
 };
-
 export default CreateNFT;
